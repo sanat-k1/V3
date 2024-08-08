@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Item Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    body {
+      background: linear-gradient(135deg, #00ff5971 0%, #c2ffdc 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-white bg-opacity-50 shadow-md glass sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="#" class="text-xl font-bold">NFT Market</a>
+      <div>
+        <a href="/" class="mx-2">Home</a>
+        <a href="#" class="mx-2">Explore</a>
+        <a href="#" class="mx-2">Community</a>
+        <a href="#" class="mx-2">Support</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Item Details -->
+  <div class="container mx-auto px-4 py-8">
+    <div class="bg-white bg-opacity-50 shadow-md glass p-6">
+      <div class="flex flex-col md:flex-row">
+        <div class="md:w-1/2">
+          <img src="https://via.placeholder.com/400" alt="NFT Image" class="rounded-lg w-full">
+        </div>
+        <div class="md:w-1/2 md:ml-6 mt-6 md:mt-0">
+          <h2 class="text-2xl font-bold">3D Locker Illustration</h2>
+          <p class="text-gray-600 mt-2">@Devid_Mill - Owned by @Devid_Mill</p>
+          <p class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sodales mi felis, pretium tincidunt lorem varius ac. Curabitur mauris lacus, pretium vel neque nec, blandit pharetra nulla.</p>
+          <div class="mt-4">
+            <p><strong>Artist:</strong> Devid Methio</p>
+            <p><strong>Size:</strong> 4000x4000</p>
+            <p><strong>Created On:</strong> 04 April, 2021</p>
+            <p><strong>Current Bid:</strong> 4.89 ETH</p>
+          </div>
+          <div class="mt-6">
+            <button class="bg-blue-500 text-white px-6 py-2 rounded-lg">Place Bid</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white bg-opacity-50 shadow-md glass mt-8">
+    <div class="container mx-auto px-4 py-4 text-center">
+      <p>&copy; 2024 NFT Market. All rights reserved.</p>
+    </div>
+  </footer>
+ <canvas class=".webgl"></canvas>
+</body>
+</html>
