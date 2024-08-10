@@ -94,11 +94,18 @@
       .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
       }
+      .webgl{
+        position: fixed;
+        top: 0;
+        left: 0;
+        outline: none;
+        pointer-events: none;
+      }
     </style>
 
     
     <!-- Custom styles for this template -->
-    <link href="product.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
   </head>
   <body>
     <canvas class="webgl"></canvas>
@@ -224,8 +231,9 @@
   <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
     <div class="text-bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
       <div class="my-3 py-3">
-        <h2 class="display-5"><a href="#rtx3090">3090</a></h2>
-        <p class="lead"><a href="" >More info..</a></p>
+        <a href="#rtx3090" style="text-decoration: none; color: white;"><h2 class="display-5">RTX 3090</h2></a>
+
+        <p class="lead"><a href="/product/rtx3090" >More info..</a></p>
       </div>
       <div class="bg-body-tertiary shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
     </div>
@@ -336,6 +344,7 @@
     </div>
   </div>
 </footer>
+
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="output.js"></script>
 </script>

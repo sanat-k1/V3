@@ -42,13 +42,6 @@ const scene = new THREE.Scene()
 const textureLoader = new THREE.TextureLoader()
 const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
 gradientTexture.magFilter = THREE.NearestFilter
-
-// Material
-const material = new THREE.MeshToonMaterial({
-    color: parameters.materialColor,
-    gradientMap: gradientTexture
-})
-
 // Objects
 const objectsDistance = 4
 
@@ -56,7 +49,7 @@ const objectsDistance = 4
 
 let rtx3090 = null
 gltfloader.load(
-    'models/nvidia_geforce_rtx_3090_founders_edition_free.glb',
+    'models/rtx3090.glb',
     (gltf) =>{
         gltf.scene.traverse((node) => {
             if (node.isMesh) {
@@ -81,7 +74,7 @@ gltfloader.load(
 ) 
 let rtx3080=null
 gltfloader.load(
-    'models/card.glb',
+    'models/rtx3080.glb',
     (gltf)=>{
         rtx3080=gltf.scene
         gltf.scene.traverse((node) => {
@@ -103,7 +96,7 @@ gltfloader.load(
 )
 let rtx3070 = null
 gltfloader.load(
-    'models/nvidia_geforce_rtx_3070_-_updated.glb',
+    'models/rtx3070.glb',
     (gltf)=>{
         
         gltf.scene.children[0].scale.set(0.008,0.008,0.008)
@@ -137,7 +130,7 @@ gltfloader.load(
 )
 let rtx2080 = null
 gltfloader.load(
-    'models/nvidia_rtx_2080_ti.glb',
+    'models/rtx2080.glb',
     (gltf)=>{
         gltf.scene.traverse((node) => {
             if (node.isMesh) {

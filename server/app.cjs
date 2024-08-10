@@ -9,8 +9,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.get('/product',(req,res)=>{
-  res.sendFile(path.join(__dirname,'../public/product.html'))
+app.get('/product/:model',(req,res)=>{
+  const model = req.params.model
+  res.render('product',{model})
 })
 
 app.listen(3000, () => {
