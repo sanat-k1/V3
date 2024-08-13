@@ -5,9 +5,9 @@ const __dirname = path.dirname(__filename)
 
 const config ={
   mode:'development',
-  entry:'./src/script.js',
+  entry:'./src/models.js',
   output:{
-    filename:'output.js',
+    filename:'modelsw.js',
     path:path.resolve(__dirname,'dist'),
   }
 }

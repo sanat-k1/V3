@@ -1,134 +1,147 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-const gltfloader = new GLTFLoader();
-let rtx3090 = null
-gltfloader.load(
-    'models/nvidia_geforce_rtx_3090_founders_edition_free.glb',
-    (gltf) =>{
-        gltf.scene.traverse((node) => {
-            if (node.isMesh) {
-                    node.material.metalness = 0.5; // Adjust metalness for better appearance
-                
-            }
-        });
-        rtx3090=gltf.scene
-        scene.add(gltf.scene)
-        gltf.scene.scale.set(0.19,0.19,0.19)
-        gltf.scene.position.y = - objectsDistance * 1.3
-        gltf.scene.rotation.x = Math.PI *2
-        gltf.scene.rotation.z= Math.PI /2.1
-        gltf.scene.rotation.y = Math.PI /2
-        gltf.scene.position.x=-2
-    },
-    undefined,
-    (error)=>{
-        console.log(error)
 
-    }
-) 
-let rtx3080=null
-gltfloader.load(
-    'models/card.glb',
-    (gltf)=>{
-        rtx3080=gltf.scene
-        gltf.scene.traverse((node) => {
-            if (node.isMesh) {
-                    node.material.metalness = 0.5; // Adjust metalness for better appearance
-                
-            }
-        });
-        
-        gltf.scene.scale.set(0.6,0.6,0.6)
-        gltf.scene.position.x=2
-        scene.add(rtx3080)
-        gltf.scene.position.y = - objectsDistance * 1.33
-        scene.add(light)
-        gltf.scene.rotation.x = Math.PI/ 2
-        gltf.scene.rotation.z= (Math.PI / 2)
-        gltf.scene.rotation.y = Math.PI *2
-    }
-)
-let rtx3070 = null
-gltfloader.load(
-    'models/nvidia_geforce_rtx_3070_-_updated.glb',
-    (gltf)=>{
-        
-        gltf.scene.children[0].scale.set(0.008,0.008,0.008)
-        scene.add(gltf.scene)
-       gltf.scene.position.y = - objectsDistance * 2.25
-       gltf.scene.position.x= -2.4
-       gltf.scene.rotation.x = Math.PI *2
-        gltf.scene.rotation.z= Math.PI /2
-        gltf.scene.rotation.y = (Math.PI /1.2)
-       rtx3070=gltf.scene
-    }
-)
-let rtx3060 = null
-let rtmixer2 = null
-gltfloader.load(
-    'models/rtx3060.glb',
-    (gltf)=>{
-        rtmixer2 = new THREE.AnimationMixer(gltf.scene)
-        const action  = rtmixer2.clipAction(gltf.animations[0])
-        action.play()
-        
-        gltf.scene.scale.set(0.006,0.006,0.006)
-        gltf.scene.position.x=2
-        rtx3060 = gltf.scene
-        scene.add(gltf.scene)
-        gltf.scene.position.y= - objectsDistance * 2.25
-        gltf.scene.rotation.x = Math.PI *2
-        gltf.scene.rotation.z= Math.PI /2.1
-        gltf.scene.rotation.y = Math.PI /2
-    }
-)
-let rtx2080 = null
-gltfloader.load(
-    'models/nvidia_rtx_2080_ti.glb',
-    (gltf)=>{
-        gltf.scene.traverse((node) => {
-            if (node.isMesh) {
-                    node.material.metalness = 0.5; // Adjust metalness for better appearance
-                
-            }
-        });
-        gltf.scene.children[0].scale.set(0.35,0.35,0.35)
-        rtx2080=gltf.scene
-        scene.add(gltf.scene)
-        gltf.scene.position.y = - objectsDistance * 3.27
-        gltf.scene.position.x = -2.15
-        gltf.scene.rotation.x = Math.PI *2
-        gltf.scene.rotation.z= Math.PI /2.1
-        gltf.scene.rotation.y = Math.PI /2
-    }
-)
 
-let rtx2070 = null
-let rtmixer3 = null
-gltfloader.load(
-    'models/rtx2070.glb',
-    (gltf)=>{   
-        rtx2070=gltf.scene
-        gltf.scene.scale.set(0.0061,0.0061,0.0061)
-        gltf.scene.position.y = - objectsDistance * 3.3
-        gltf.scene.position.x = 2
-        scene.add(gltf.scene)    
-        gltf.scene.rotation.x = Math.PI *2
-        gltf.scene.rotation.z= Math.PI /2.1
-        gltf.scene.rotation.y = Math.PI /2
-    }
-)
-let rtx2060 = null
-gltfloader.load(
-    'models/rtx2060.glb',
-    (gltf)=>{
-        scene.add(gltf.scene)
-        gltf.scene.scale.set(0.0061,0.0061,0.0061)
-        gltf.scene.position.y = - objectsDistance * 4.2
-        gltf.scene.position.x = -2
-        rtx2060=gltf.scene
-        gltf.scene.rotation.x = Math.PI *2
-        gltf.scene.rotation.z= Math.PI /2.1
-        gltf.scene.rotation.y = Math.PI /2
-    }
-)
+let rtx3080Model, rtx3090Model, rtx3070Model, rtx3060Model, rtx2080Model, rtx2070Model, rtx2060Model
+
+export function rtx3090(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('/models/rtx3090.glb', (gltf) => {
+            rtx3090Model = gltf.scene
+            rtx3090Model.traverse((node) => {
+                if (node.isMesh) {
+                    node.material.metalness = 0.5 // Adjust metalness for better appearance
+                }
+            })
+            rtx3090Model.scale.set(0.19, 0.19, 0.19)
+            rtx3090Model.rotation.x = Math.PI * 2
+            rtx3090Model.rotation.z = Math.PI / 2.1
+            rtx3090Model.rotation.y = Math.PI / 2
+            scene.add(rtx3090Model)
+            resolve(rtx3090Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export function rtx3080(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('models/rtx3080.glb', (gltf) => {
+            rtx3080Model = gltf.scene
+            rtx3080Model.traverse((node) => {
+                if (node.isMesh) {
+                    node.material.metalness = 0.5 // Adjust metalness for better appearance
+                }
+            })
+            rtx3080Model.scale.set(0.6, 0.6, 0.6)
+            rtx3080Model.rotation.x = Math.PI / 2
+            rtx3080Model.rotation.z = Math.PI / 2
+            rtx3080Model.rotation.y = Math.PI * 2
+            scene.add(rtx3080Model)
+            resolve(rtx3080Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export function rtx3070(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('models/rtx3070.glb', (gltf) => {
+            rtx3070Model = gltf.scene
+            rtx3070Model.children[0].scale.set(0.008, 0.008, 0.008)
+            rtx3070Model.rotation.x = Math.PI * 2
+            rtx3070Model.rotation.z = Math.PI / 2
+            rtx3070Model.rotation.y = Math.PI / 1.2
+            scene.add(rtx3070Model)
+            resolve(rtx3070Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export function rtx3060(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('models/rtx3060.glb', (gltf) => {
+            rtx3060Model = gltf.scene
+            rtx3060Model.scale.set(0.006, 0.006, 0.006)
+            rtx3060Model.rotation.x = Math.PI * 2
+            rtx3060Model.rotation.z = Math.PI / 2.1
+            rtx3060Model.rotation.y = Math.PI / 2
+            scene.add(rtx3060Model)
+            resolve(rtx3060Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export function rtx2080(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('models/rtx2080.glb', (gltf) => {
+            rtx2080Model = gltf.scene
+            rtx2080Model.traverse((node) => {
+                if (node.isMesh) {
+                    node.material.metalness = 0.5 // Adjust metalness for better appearance
+                }
+            })
+            rtx2080Model.children[0].scale.set(0.35, 0.35, 0.35)
+            rtx2080Model.rotation.x = Math.PI * 2
+            rtx2080Model.rotation.z = Math.PI / 2.1
+            rtx2080Model.rotation.y = Math.PI / 2
+            scene.add(rtx2080Model)
+            resolve(rtx2080Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export function rtx2070(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('models/rtx2070.glb', (gltf) => {
+            rtx2070Model = gltf.scene
+            rtx2070Model.scale.set(0.0061, 0.0061, 0.0061)
+            rtx2070Model.rotation.x = Math.PI * 2
+            rtx2070Model.rotation.z = Math.PI / 2.1
+            rtx2070Model.rotation.y = Math.PI / 2
+            scene.add(rtx2070Model)
+            resolve(rtx2070Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export function rtx2060(scene,gltfloader) {
+    return new Promise((resolve, reject) => {
+        const gltfloader = new GLTFLoader()
+        gltfloader.load('models/rtx2060.glb', (gltf) => {
+            rtx2060Model = gltf.scene
+            rtx2060Model.scale.set(0.0061, 0.0061, 0.0061)
+            rtx2060Model.rotation.x = Math.PI * 2
+            rtx2060Model.rotation.z = Math.PI / 2.1
+            rtx2060Model.rotation.y = Math.PI / 2
+            scene.add(rtx2060Model)
+            resolve(rtx2060Model) // Resolve the promise with the loaded model
+        }, undefined, (error) => {
+            reject(error) // Reject the promise on error
+        })
+    })
+}
+
+export const modelFunctions = {
+    rtx3080,
+    rtx3090,
+    rtx3070,
+    rtx3060,
+    rtx2080,
+    rtx2070,
+    rtx2060
+}
