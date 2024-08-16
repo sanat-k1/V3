@@ -22,7 +22,29 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User',userSchema)
 
+const productschema =  new mongoose.Schema({
+  productid :{ type: Number,unique: true},
+  productname:{type: String},
+  productcost:{type:Number},
+})
+
+const product = mongoose.model('Product',productschema)
+
+const products= {
+  "3090":0,
+  "3080":0,
+  "3070":0,
+  "3060":0,
+  "2080":0,
+  "2070":0,
+  "2060":0
+}
+
 app.get('/', (req, res) => {
+  const prod= 'products'
+  if(!req.cookies[prod]){
+    res.cookie('products',JSON.stringify(products),{ maxAge: 315360000000,path:'/'})
+  }
   res.sendFile(path.join(__dirname, '../public/index.html'));
   
 });
@@ -32,10 +54,34 @@ app.get('/product/:model',(req,res)=>{
   res.render('product',{model})
 })
 
-app.get('/cart',(req,res)=>{
-  res.render('cart')
+app.get('/cart',async (req,res)=>{
+  const cartcookie = req.cookies['products']
+  if(cartcookie){
+    const cart = JSON.parse(cartcookie)
+    const productNames = Object.keys(cart).filter(product => cart[product] >= 1)
+    const productsFromDB = await product.find({ productname: { $in: productNames } })
+    let total =0
+    const cartDetails = productsFromDB.map(prod => {
+      const quantity = cart[prod.productname]
+      const cost = prod.productcost * quantity
+      total += cost
+      return {
+        productname: prod.productname,
+        productcost: prod.productcost,
+        quantity: quantity,
+        cost: cost
+      }
+    })
+    res.render('cart', { cartDetails, total })
+  }else{
+    res.render('cart',{ cartDetails: [], totalCost: 0 })
+  }
+  
 })
 
+app.get('/checkout',(req,res)=>{
+  res.render('checkout')
+})
 
 app.get('/profile',(req,res)=>{
   res.render('profile')
@@ -80,8 +126,6 @@ app.get('/login',(req,res)=>{
 app.post('/login',async (req,res)=>{
   const {username,password} = req.body
   try {
-    // Implement authentication logic here
-    // Example: find the user and compare passwords
     const user = await User.findOne({ username })
     if (user && user.password === password) {
       res.cookie('username', username, { maxAge: 315360000000,path:'/'})
@@ -98,7 +142,6 @@ app.post('/login',async (req,res)=>{
 })
 
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000/');
-  console.log(`${port}`)
-});
+app.listen(port, () => {
+  console.log('Server is running on http://localhost:3000/')
+})

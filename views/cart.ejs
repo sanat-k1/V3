@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    body {
+      background: linear-gradient(135deg, #00ff5971 0%, #c2ffdc 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <nav class="bg-white bg-opacity-50 shadow-md glass sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <h2 class="text-xl font-bold inline">Total:<%= total %> INR</h2>
+      <div>
+        <a href="/" class="mx-2">Home</a>
+        <a href="/checkout" class="mx-2">Checkout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto px-4 py-8" id="cart-container">
+    <!-- Loop through the cartDetails and display each product in a glass box -->
+    <% cartDetails.forEach(item => { %>
+      <div class="bg-white bg-opacity-50 shadow-md glass p-6 mb-4">
+        <h2 class="text-xl font-bold">Product: <%= item.productname %></h2>
+        <p>Quantity: <%= item.quantity %></p>
+        <p>Price per Unit: <%= item.productcost %> INR</p>
+        <p>Total Cost for this Item: <%= item.cost %> INR</p>
+      </div>
+    <% }); %>
+    
+    <!-- Display the total cost -->
+    
+  </div>
+
+  <footer class="bg-white bg-opacity-50 shadow-md glass mt-8">
+    <div class="container mx-auto px-4 py-4 text-center">
+      <p>&copy; 2024 NFT Market. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
