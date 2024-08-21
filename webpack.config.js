@@ -8,7 +8,7 @@ const config ={
   entry:'./src/models.js',
   output:{
     filename:'modelsw.js',
-    path:path.resolve(__dirname,'dist'),
+    path:path.resolve(__dirname,'src'),
   }
 }
 export default config

@@ -2,6 +2,9 @@
 import * as THREE from 'three';
 import Stats from 'stats.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+
 
 // Variables for storing models
 let rtx3080Model, rtx3090Model, rtx3070Model, rtx3060Model, rtx2080Model, rtx2070Model, rtx2060Model;
@@ -65,11 +68,26 @@ export function rtx3070(scene) {
 export function rtx3060(scene) {
     return new Promise((resolve, reject) => {
         const gltfloader = new GLTFLoader();
-        gltfloader.load('/models/rtx3060.glb', (gltf) => {
+        gltfloader.load('/models/rtx30602.glb', (gltf) => {
             rtx3060Model = gltf.scene;
-            rtx3060Model.scale.set(0.006, 0.006, 0.006);
+            rtx3060Model.traverse((node) => {
+                if (node.isMesh) {
+                    node.material.metalness = 0.3;
+                }
+            })
+            rtx3060Model.scale.set(0.3, 0.3, 0.3);
             rtx3060Model.rotation.set(Math.PI * 2, Math.PI / 2, Math.PI / 2.1);
             scene.add(rtx3060Model);
+
+            // Add a point light near the RTX 3060 model
+            const pointLight = new THREE.PointLight(0xffffff, 1, 100); // Color, intensity, distance
+            pointLight.position.set(2, 2, 2); // Position the light (x, y, z)
+            scene.add(pointLight);
+
+            // Optionally, add a helper to visualize the light position (remove in production)
+            // const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.5);
+            // scene.add(pointLightHelper);
+
             resolve(rtx3060Model);
         }, undefined, (error) => {
             reject(error);
@@ -140,6 +158,7 @@ export const modelFunctions = {
 
 // Function to handle model loading and scene setup
 
+
     console.log("The model is:", model);
 
     const canvas = document.querySelector('canvas.webgl');
@@ -151,9 +170,9 @@ export const modelFunctions = {
 
     // Set up camera
     const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.z = 6;
+    camera.position.set(0, 0, 5)
     scene.add(camera);
-
+    
     // Handle window resize
     const sizes = {
         width: window.innerWidth,
@@ -176,13 +195,17 @@ export const modelFunctions = {
         powerPreference: 'high-performance',
         antialias: false
     });
-    renderer.setSize(sizes.width, sizes.height);
+    
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
+    const controls = new ArcballControls(camera,canvas,scene)
+    let mde = null
     // Load and add the model to the scene
     modelFunctions[model](scene).then(md => {
-        console.log(md); // This will log the model after it's loaded
-        md.position.x = -2;
+         // This will log the model after it's loaded
+        mde=md
+        camera.position.set(md.position())
+        
     }).catch(error => {
         console.error('Error loading model:', error);
     });
@@ -190,23 +213,36 @@ export const modelFunctions = {
     // Set up stats panel for monitoring performance
     const stat = new Stats();
     document.body.appendChild(stat.dom);
-
+ 
     // Animate the scene
     const clock = new THREE.Clock();
+    
 
+    
+    controls.enableZoom=false
+    controls.update()
+    controls.setCenter(0,0,0)
+    
+    
+    let previousTime = 0
     const tick = () => {
-        stat.begin();
+        stat.begin()
 
-        const elapsedTime = clock.getElapsedTime();
-
+        const elapsedTime = clock.getElapsedTime()
+        const deltaTime = elapsedTime - previousTime
+        previousTime = elapsedTime
+        if(mde){
+            mde.rotation.x+=deltaTime*0.1
+            mde.rotation.y+=deltaTime*0.1
+        }
         // Render the scene
-        renderer.render(scene, camera);
+        renderer.render(scene, camera)
 
         // Call tick again on the next frame
-        requestAnimationFrame(tick);
-
-        stat.end();
+        requestAnimationFrame(tick)
+        controls.update()
+        stat.end()
     };
-
+    console.log(renderer.info)
     tick();
 
