@@ -5,15 +5,17 @@ const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 
+
 mongoose.connect('mongodb://127.0.0.1:27017/WEB')
 
 const app = express();
-const port = 3000
+const port = 3001
 app.set("view engine","ejs")
 app.use('/node_modules', express.static(path.join(__dirname, '../node_modules')));
 app.use(bodyparser.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname, '../src')));
 app.use(cookieParser())
+app.use(express.json())
 
 const gpu = [
   { model: "rtx3090", description: "The NVIDIA GeForce RTX 3090 is the flagship card of the RTX 30 series, boasting a massive 24 GB of GDDR6X memory. It is built on the Ampere architecture, which provides substantial improvements in performance and efficiency over its predecessors. This GPU excels in 4K gaming, offering high frame rates and exceptional graphical detail. It's also well-suited for intensive tasks like 3D rendering, video editing, and AI research, thanks to its large memory capacity and powerful CUDA cores. The RTX 3090 supports advanced features such as real-time ray tracing and AI-enhanced graphics, making it a top choice for enthusiasts and professionals seeking the best performance available." },
@@ -25,11 +27,12 @@ const gpu = [
   { model: "rtx2060", description: "The NVIDIA GeForce RTX 2060 is an entry-level GPU from the Turing architecture, featuring 6 GB of GDDR6 memory. It is designed for solid 1080p and some 1440p gaming performance, with support for real-time ray tracing and AI-powered features through NVIDIA's RTX technology. The RTX 2060 provides good value for gamers looking for high-quality graphics and performance at a more affordable price. It is also a great option for those new to gaming or upgrading from older graphics cards." }
 ];
 
-
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  name: { type: String,required: true},
   email: { type: String, required: true, unique: true },
+  address:{type:String,required:true},
 });
 const User = mongoose.model('User',userSchema)
 
@@ -51,44 +54,111 @@ const products= {
   "2060":0
 }
 
+const orderSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  products: [
+    {
+      productname: { type: String, required: true },
+      quantity: { type: Number, required: true },
+      cost: { type: Number, required: true },
+    },
+  ],
+  totalCost: { type: Number, required: true },
+  orderDate: { type: Date, default: Date.now }
+});
+
+const Order = mongoose.model('Order', orderSchema);
+
 app.get('/', (req, res) => {
   const prod= 'products'
   if(!req.cookies[prod]){
     res.cookie('products',JSON.stringify(products),{ maxAge: 315360000000,path:'/'})
   }
   res.render('index')
-  
 });
 
-app.get('/product/:model',(req,res)=>{
-  const model = req.params.model
-  const description = gpu.find(item=>item.model === model)
-  res.render('product',{model,description})
+app.get('/test',(req,res)=>{
+  res.sendFile((path.join(__dirname, '../public/streams.html')))
 })
 
-app.get('/cart',async (req,res)=>{
-  const cartcookie = req.cookies['products']
-  if(cartcookie){
-    const cart = JSON.parse(cartcookie)
-    const productNames = Object.keys(cart).filter(product => cart[product] >= 1)
-    const productsFromDB = await product.find({ productname: { $in: productNames } })
-    let total =0
+app.get('/cart', async (req, res) => {
+  const username = req.cookies['username']
+  if(username){
+    const user = await User.findOne({username:username})
+  
+  const cartcookie = req.cookies['products'];
+  if (cartcookie) {
+    const cart = JSON.parse(cartcookie);
+    const productNames = Object.keys(cart).filter(product => cart[product] >= 1);
+    const productsFromDB = await product.find({ productname: { $in: productNames } });
+    let total = 0;
+
     const cartDetails = productsFromDB.map(prod => {
-      const quantity = cart[prod.productname]
-      const cost = prod.productcost * quantity
-      total += cost
+      const quantity = cart[prod.productname];
+      const cost = prod.productcost * quantity;
+      total += cost;
+      
+      // Get images for each product
+      const model = `rtx${prod.productname}`;
+      const productImages = images[model] || [];
+      const image = productImages[0]
+
       return {
         productname: prod.productname,
         productcost: prod.productcost,
         quantity: quantity,
-        cost: cost
-      }
-    })
-    res.render('cart', { cartDetails, total })
-  }else{
-    res.render('cart',{ cartDetails: [], totalCost: 0 })
+        cost: cost,
+        images: image// Include images in cart details
+      };
+    });
+
+    res.render('newcart', { cartDetails, total ,user});
+  } else {
+    res.render('newcart', { cartDetails: [], total: 0 ,user});
   }
-  
+}
+});
+
+app.post('/process-payment', async (req, res) => {
+  const cartCookie = req.cookies['products'];
+  const username = req.cookies['username'];
+
+  if (cartCookie && username) {
+    const cart = JSON.parse(cartCookie);
+    const productNames = Object.keys(cart).filter(product => cart[product] >= 1);
+    const productsFromDB = await product.find({ productname: { $in: productNames } });
+
+    let totalCost = 0;
+    const orderProducts = productsFromDB.map(prod => {
+      const quantity = cart[prod.productname];
+      const cost = prod.productcost * quantity;
+      totalCost += cost;
+      return {
+        productname: prod.productname,
+        quantity: quantity,
+        cost: cost
+      };
+    });
+
+    // Save order to database
+    const newOrder = new Order({
+      username: username,
+      products: orderProducts,
+      totalCost: totalCost
+    });
+
+    await newOrder.save();
+
+    // Clear cart after placing order
+    res.clearCookie('products');
+    res.redirect('/orders');
+  } else {
+    res.status(400).send('No items in the cart or user not logged in.');
+  }
+});
+
+app.get('/orders',(req,res)=>{
+  res.render('orders')
 })
 
 app.get('/checkout',(req,res)=>{
@@ -132,41 +202,104 @@ const images = {
     '/assets/images/rt260-3.png'
   ]
 }
-app.get('/test/:model',async(req,res)=>{
+app.get('/product/:model',async(req,res)=>{
   const model = req.params.model
   const description = gpu.find(item=>item.model === model)
   const price = await product.findOne({productname:model.slice(3,)})
   const productcost = price ? price.productcost : 'Not available'
   const modelimages = images[model] 
-  res.render('test',{model,description,productcost,images: modelimages})
+  res.render('product',{model,description,productcost,images: modelimages})
 })
 
-app.get('/profile',(req,res)=>{
-  res.render('profile')
+app.get('/profile',async(req,res)=>{
+  const username = req.cookies['username']
+  if(!username){
+    res.render('/login')
+  }
+    const user = await User.findOne({username:username})
+    try {
+      const orders = await Order.find({username})
+      const productFrequency = {}
+      let number_of_products = 0
+      let details = []
+      let tot =0
+      
+      orders.forEach(order => {
+        tot += order.totalCost
+        order.products.forEach(product => {
+          const image = images['rtx' + product.productname][0]
+          const date = order.orderDate
+          const total = order.totalCost
+          const prod = "RTX"+product.productname
+          details.push({
+            image:image,
+            date:date,
+            total:total,
+            prod:prod
+          })
+          
+          if (productFrequency[product.productname]) {
+            productFrequency[product.productname] += product.quantity
+            
+          } else {
+            productFrequency[product.productname] = product.quantity
+          }
+          number_of_products +=product.quantity
+        });
+      });
+      const sortedProducts = Object.entries(productFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .map(entry => ({ productname: entry[0], quantity: entry[1] }))
+     
+      let productImages = sortedProducts.map(product => {
+        return {
+          productname: product.productname,
+          image: (images['rtx'+product.productname][0])
+        }
+      })
+      productImages =productImages.slice(0,3)
+      details = details.slice(0,5)
+      res.render('profile',{user,productImages,details,number_of_products,tot})
+    }
+    catch (error) {
+      console.error('Error fetching popular items:', error)
+      res.status(500).send('Server error')
+    }
 })
 
+app.post('/update-profile', async (req, res) => {
+  const { name, address } = req.body;
+  const olduser = req.cookies['username'];
+  try {
+    const user = await User.findOne({ username: olduser });
+    if (!user) {
+      return res.json({ success: false, message: 'User not found' });
+    }
+    const result = await User.updateOne(
+      { username: olduser },
+      { $set: { name, address } }
+    );
+    // if (result.nModified > 0) {
+    //   res.json({ success: true, message: 'Profile updated successfully' });
+    // } else {
+    //   res.json({ success: false, message: 'No changes made or user not found' });
+    // }
+    res.redirect('/profile')
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-app.get('/orders',(req,res)=>{
-  res.render('orders')
-})
 
-app.get('/browse',(req,res)=>{
-  res.sendFile((path.join(__dirname, '../public/browse.html')))
-})
-app.get('/error/:msg',(req,res)=>{
-
-})
-
-
-
+// login nd sign up
 
 app.get('/signup',(req,res)=>{
-  res.sendFile((path.join(__dirname, '../public/signup.html')))
+  res.render('signup')
 })
 
 app.post('/signup',async (req,res)=>{
-  const {username,password,email} =req.body
-  console.log(username,password,email)
+  const {username,password,email,address,name} =req.body
+  console.log(username,password,email, address, name )
   try {
     const exist = await User.findOne({$or:[{username},{email}]})
     if(exist){
@@ -177,8 +310,9 @@ app.post('/signup',async (req,res)=>{
       }
     }
     else{
-    const user = new User({ username, password, email })
+    const user = new User({ username, password, name, email, address})
     await user.save()
+    res.cookie('username',username,{ maxAge: 315360000000,path:'/'})
     res.redirect('/')
   }
   } catch (error) {
@@ -189,7 +323,7 @@ app.post('/signup',async (req,res)=>{
 })
 
 app.get('/login',(req,res)=>{
-  res.sendFile((path.join(__dirname, '../public/login.html')))
+  res.render('login')
 })
 app.post('/login',async (req,res)=>{
   const {username,password} = req.body
@@ -211,5 +345,5 @@ app.post('/login',async (req,res)=>{
 
 
 app.listen(port, () => {
-  console.log('Server is running on http://localhost:3000/')
+  console.log(`Server is running on http://localhost:${port}/`)
 })
