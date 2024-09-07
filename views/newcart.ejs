@@ -32,6 +32,31 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
+    .cart-icon-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .cart-icon {
+      width: 24px; /* Adjust as needed */
+      height: 24px; /* Adjust as needed */
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -14px; /* Adjust as needed */
+      right: -14px; /* Adjust as needed */
+      background-color: rgba(63, 63, 63, 0.382); /* Badge color */
+      color: white; /* Text color */
+      border-radius: 50%;
+      padding: 2px 6px; /* Adjust size */
+      font-size: 12px; /* Adjust size */
+      font-weight: bold;
+      min-width: 20px; /* Ensure minimum size */
+      text-align: center;
+      opacity: 75%;
+    }
+
   </style>
 </head>
 
@@ -86,7 +111,7 @@
               <li><a href="/#products">Products</a></li>
               <li><a href="/cart" class="active"><div class="cart-icon-container">cart 
                 <!-- <i class="las la-shopping-cart"></i> -->
-                <!-- <span class="cart-badge" id="cartq">0</span>  -->
+                <span class="cart-badge" id="cartq">0</span> 
                 </div></a></li>
               <li><a href="/profile"  id="logg">Profile <img src="assets/images/profile-header.jpg" alt=""></a></li>
           </ul>   
@@ -100,14 +125,46 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script>
-      window.onload = function() {
-        const username = Cookies.get('username');
-        if (username) {
-          document.getElementById('logg').textContent = username;
-          document.getElementById('logg').href = '/profile';
-        }
+      let products = {
+          "3090": 0,
+          "3080": 0,
+          "3070": 0,
+          "3060": 0,
+          "2080": 0,
+          "2070": 0,
+          "2060": 0
+      };
+      let sum = 0;
+      const cartq = document.getElementById('cartq');
+      
+      window.onload = function () {
+          const username = Cookies.get('username');
+          if (username) {
+              document.getElementById('logg').textContent = username;
+              document.getElementById('logg').href = '/profile';
+          }
+      
+          const savedProducts = Cookies.get('products');
+          if (savedProducts) {
+              const parsedProducts = JSON.parse(savedProducts);
+              products = { ...products, ...parsedProducts }; // Merge default products with saved ones
+      
+              // Update the UI for each product based on the quantity
+              Object.keys(products).forEach(id => {
+                 
+                  sum += products[id]; // Calculate the total cart quantity
+              });
+              cartq.innerText = sum;
+          }
+      };
+      
+     
+      
+      function sumProducts() {
+          return Object.values(products).reduce((acc, value) => acc + value, 0);
       }
-    </script>
+      
+      </script>
   </header>
   <!-- ***** Header Area End ***** -->
 

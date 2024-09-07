@@ -86,8 +86,8 @@ const sectionMeshesPromises = [
     loadModel('models/rtx3070.glb', [0.016, 0.016, 0.016], [0,0,0], [Math.PI * 2, Math.PI / 1.2, Math.PI / 2], 'canvas-r3070'),
     loadModel('models/rtx30602.glb', [0.6, 0.6, 0.6], [0,1,0], [Math.PI * 2, Math.PI / 2.1, Math.PI / 2], 'canvas-r3060'),
     loadModel('models/rtx2080.glb', [0.55, 0.55, 0.55], [0,0,0], [Math.PI * 2, Math.PI / 2.1, Math.PI / 2], 'canvas-r2080'),
-    loadModel('models/rtx2070.glb', [0.011, 0.011, 0.011], [0,0,0], [Math.PI * 2, Math.PI / 2.1, Math.PI / 2], 'canvas-r2070'),
-    loadModel('models/rtx2060.glb', [0.011, 0.011, 0.011], [0,0,0], [Math.PI * 2, Math.PI / 2.1, Math.PI / 2], 'canvas-r2060')
+    loadModel('models/rtx2070-v1.glb', [0.011, 0.011, 0.011], [0,0,0], [Math.PI * 2, Math.PI / 2.1, Math.PI / 2], 'canvas-r2070'),
+    loadModel('models/rtx2060-v1.glb', [0.011, 0.011, 0.011], [0,0,0], [Math.PI * 2, Math.PI / 2.1, Math.PI / 2], 'canvas-r2060')
 ];
 
 Promise.all(sectionMeshesPromises).then(() => {

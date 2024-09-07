@@ -187,38 +187,47 @@
                         </ul>
                       </div>
                       <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-            <script>
-              
-              window.onload = function() {
-    const username = Cookies.get('username');
-    if (username) {
-      document.getElementById('logg').textContent = username;
-      document.getElementById('logg').href='/profile';
-    } 
-    const incart = document.getElementById('quantity')
-
-    const savedProducts = Cookies.get('products');
-    if (savedProducts) {
-      const parsedProducts = JSON.parse(savedProducts);
-      products = parsedProducts;
-      if (products[model.slice(3,)] ==0)
-      {incart.innerText = 0}
-      else
-      {
-        incart.innerText = products[model.slice(3,)]
-      }
-      Object.assign(products, parsedProducts);
-      Object.keys(products).forEach(id => {
-        const tag = document.getElementById(`${id}-q`);
-        if (tag) {
-          tag.textContent = products[id] > 0 ? products[id] : ''; // Display quantity only if greater than 0
-          sum += products[id];
-        }
-      });
-      cartq.innerText = sum;
-    }
-}
-            </script>
+                      <script>
+                        let products = {
+                            "3090": 0,
+                            "3080": 0,
+                            "3070": 0,
+                            "3060": 0,
+                            "2080": 0,
+                            "2070": 0,
+                            "2060": 0
+                        };
+                        let sum = 0;
+                        const cartq = document.getElementById('cartq');
+                        
+                        window.onload = function () {
+                            const username = Cookies.get('username');
+                            if (username) {
+                                document.getElementById('logg').textContent = username;
+                                document.getElementById('logg').href = '/profile';
+                            }
+                        
+                            const savedProducts = Cookies.get('products');
+                            if (savedProducts) {
+                                const parsedProducts = JSON.parse(savedProducts);
+                                products = { ...products, ...parsedProducts }; // Merge default products with saved ones
+                        
+                                // Update the UI for each product based on the quantity
+                                Object.keys(products).forEach(id => {
+                                   
+                                    sum += products[id]; // Calculate the total cart quantity
+                                });
+                                cartq.innerText = sum;
+                            }
+                        };
+                        
+                       
+                        
+                        function sumProducts() {
+                            return Object.values(products).reduce((acc, value) => acc + value, 0);
+                        }
+                        
+                        </script>
                     </div>
                     <div class="col-lg-6">
                       <div class="right-info">

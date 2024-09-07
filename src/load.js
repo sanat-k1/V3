@@ -145,3 +145,41 @@ export const modelFunctions = {
     rtx2070,
     rtx2060
 }
+function disposeModel(model) {
+    if (!model) return;
+
+    model.traverse((node) => {
+        if (node.isMesh) {
+            // Dispose of the geometry and material
+            if (node.geometry) node.geometry.dispose();
+            if (node.material) {
+                if (Array.isArray(node.material)) {
+                    node.material.forEach((material) => {
+                        if (material.map) material.map.dispose(); // Dispose textures
+                        material.dispose(); // Dispose material
+                    });
+                } else {
+                    if (node.material.map) node.material.map.dispose(); // Dispose textures
+                    node.material.dispose(); // Dispose material
+                }
+            }
+        }
+    });
+
+    // Remove the model from the scene
+    model.parent.remove(model);
+}
+
+// Example function to dispose of all models when leaving the page
+function disposeAllModels() {
+    disposeModel(rtx3080Model);
+    disposeModel(rtx3090Model);
+    disposeModel(rtx3070Model);
+    disposeModel(rtx3060Model);
+    disposeModel(rtx2080Model);
+    disposeModel(rtx2070Model);
+    disposeModel(rtx2060Model);
+}
+
+// Call this function when navigating away or before reloading the scene
+window.addEventListener('beforeunload', disposeAllModels);

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import Stats from 'stats.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+
 
 
 // Variables for storing models
@@ -118,7 +118,7 @@ export function rtx2080(scene) {
 export function rtx2070(scene) {
     return new Promise((resolve, reject) => {
         const gltfloader = new GLTFLoader();
-        gltfloader.load('/models/rtx2070.glb', (gltf) => {
+        gltfloader.load('/models/rtx2070-v1.glb', (gltf) => {
             rtx2070Model = gltf.scene;
             rtx2070Model.scale.set(0.0061, 0.0061, 0.0061);
             rtx2070Model.rotation.set(Math.PI * 2, Math.PI / 2, Math.PI / 2.1);
@@ -133,7 +133,7 @@ export function rtx2070(scene) {
 export function rtx2060(scene) {
     return new Promise((resolve, reject) => {
         const gltfloader = new GLTFLoader();
-        gltfloader.load('/models/rtx2060.glb', (gltf) => {
+        gltfloader.load('/models/rtx2060-v1.glb', (gltf) => {
             rtx2060Model = gltf.scene;
             rtx2060Model.scale.set(0.0061, 0.0061, 0.0061);
             rtx2060Model.rotation.set(Math.PI * 2, Math.PI / 2, Math.PI / 2.1);
@@ -156,6 +156,32 @@ export const modelFunctions = {
     rtx2060
 };
 
+function disposeModel(model) {
+    if (model) {
+        // Remove the model from the scene
+        scene.remove(model);
+
+        // Dispose of all materials
+        model.traverse((child) => {
+            if (child.isMesh) {
+                if (child.material.map) child.material.map.dispose();
+                if (child.material.bumpMap) child.material.bumpMap.dispose();
+                if (child.material.normalMap) child.material.normalMap.dispose();
+                if (child.material.specularMap) child.material.specularMap.dispose();
+                child.material.dispose();
+            }
+        });
+
+        // Dispose of geometries
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.geometry.dispose();
+            }
+        });
+    }
+}
+
+
 // Function to handle model loading and scene setup
 
 
@@ -165,8 +191,7 @@ export const modelFunctions = {
     const scene = new THREE.Scene();
 
     // Set up lighting
-    const light = new THREE.AmbientLight(0x404040, 3);
-    scene.add(light);
+
 
     // Set up camera
     const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -196,15 +221,23 @@ export const modelFunctions = {
         antialias: false
     });
     
+    const light = new THREE.AmbientLight(0x404040, 3);
+    scene.add(light);
+
+    const directionalLight = new THREE.DirectionalLight('#ffffff', 5);
+    directionalLight.position.set(1, 1, 0);
+    scene.add(directionalLight);
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     const controls = new ArcballControls(camera,canvas,scene)
     let mde = null
     // Load and add the model to the scene
+    let currentModel = null
     modelFunctions[model](scene).then(md => {
          // This will log the model after it's loaded
+        currentModel = md
         mde=md
-        camera.position.set(md.position())
+        
         
     }).catch(error => {
         console.error('Error loading model:', error);
@@ -243,6 +276,76 @@ export const modelFunctions = {
         controls.update()
         stat.end()
     };
+    
     console.log(renderer.info)
     tick();
-
+    function dispose() {
+        // Dispose of all geometries
+        scene.traverse((object) => {
+            if (object.isMesh) {
+                if (object.material) {
+                    if (object.material.map) object.material.map.dispose();
+                    if (object.material.bumpMap) object.material.bumpMap.dispose();
+                    if (object.material.normalMap) object.material.normalMap.dispose();
+                    if (object.material.specularMap) object.material.specularMap.dispose();
+                    object.material.dispose();
+                }
+                if (object.geometry) {
+                    object.geometry.dispose();
+                }
+            }
+        });
+    
+        // Dispose of all textures
+        Object.values(renderer.info.memory.textures).forEach(texture => texture.dispose());
+    
+        // Dispose of WebGL programs
+        renderer.info.programs.forEach(program => {
+            program.destroy();
+        });
+    
+        // Dispose of renderer
+        if (renderer) {
+            renderer.dispose();
+        }
+    
+        // Dispose of controls
+        if (controls) {
+            controls.dispose();
+        }
+    
+        // Clean up event listeners
+        window.removeEventListener('resize', onWindowResize);
+        window.removeEventListener('beforeunload', dispose);
+    
+        // Clear the scene
+        while (scene.children.length > 0) {
+            const child = scene.children[0];
+            scene.remove(child);
+            if (child.isMesh) {
+                child.geometry.dispose();
+                child.material.dispose();
+            }
+        }
+    }
+    
+    // Example resize handler
+    function onWindowResize() {
+        sizes.width = window.innerWidth;
+        sizes.height = window.innerHeight;
+        camera.aspect = sizes.width / sizes.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(sizes.width, sizes.height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+    
+    // Call dispose on page unload
+    window.addEventListener('beforeunload', dispose);
+    
+    
+    window.addEventListener('beforeunload', () => {
+        if (currentModel) {
+            disposeModel(currentModel);
+        }
+        dispose()
+    });
