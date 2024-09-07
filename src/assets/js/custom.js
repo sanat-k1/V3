@@ -226,16 +226,17 @@
 				zIndex: '1'
 			});
 		}
-
+	
+		// Preloader opacity reduction will take 5 seconds
 		$("#preloader").animate({
 			'opacity': '0'
-		}, 600, function(){
+		}, 5000, function(){
+			// Hides the preloader completely after 5 seconds
 			setTimeout(function(){
 				$("#preloader").css("visibility", "hidden").fadeOut();
-			}, 300);
+			}, 0);  // No delay after fading out (already animated for 5 seconds)
 		});
 	});
-
 	
 
 	const dropdownOpener = $('.main-nav ul.nav .has-sub > a');

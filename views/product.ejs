@@ -102,24 +102,35 @@
 
             <!-- Search End -->
             <div class="search-input">
-              <form id="search" action="#">
+              <form id="search" onsubmit="return handleSearch()">
                 <input type="text" placeholder="Type Something" id='searchText' name="searchKeyword" onkeypress="handle" />
                 <i class="fa fa-search"></i>
               </form>
             </div>
+            <script>
+              function handleSearch() {
+                const searchTerm = document.getElementById('searchText').value.trim().toLowerCase();
+                
+                // Send the user directly to the product page if search term matches a model
+                if (searchTerm) {
+                  window.location.href = `/search?searchKeyword=${encodeURIComponent(searchTerm)}`;
+                }
+                
+                return false; // Prevent form submission (handled via JavaScript)
+              }
+            </script>
             <!-- Search End -->
 
             <!-- Menu Start -->
             <ul class="nav">
-              <li><a href="/" class="active">Home</a></li>
-              <li><a href="">Products</a></li>
-              <li><a href="details.html">Details</a></li>
+              <li><a href="/" >Home</a></li>
+              <li><a href="/#products"class="active">Products</a></li>
               <li><a href="/cart"><div class="cart-icon-container">cart 
                 <!-- <i class="las la-shopping-cart"></i> -->
                 <span class="cart-badge" id="cartq">0</span> 
                 </div></a></li>
-              <li><a href="/profile" id="logg">Profile <img src="/assets/images/profile-header.jpg" alt=""></a></li>
-            </ul>
+              <li><a href="/profile"  id="logg">Profile <img src="assets/images/profile-header.jpg" alt=""></a></li>
+          </ul>   
 
             <a class='menu-trigger'>
               <span>Menu</span>
@@ -168,11 +179,11 @@
                       <div class="left-info">
                         <div class="left">
                           <h4>In cart</h4>
-                          <span>No of units bought</span>
+                          <span>Total No of units bought</span>
                         </div>
-                        <ul>
+                        <ul style="color: #666666;">
                           <li id="quantity">0</li>
-                          <li><i class="fa fa-download"></i> 2.3M</li>
+                          <i class="las la-truck"></i> 2.3M</li>
                         </ul>
                       </div>
                       <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
@@ -194,7 +205,7 @@
       {incart.innerText = 0}
       else
       {
-        
+        incart.innerText = products[model.slice(3,)]
       }
       Object.assign(products, parsedProducts);
       Object.keys(products).forEach(id => {
@@ -213,9 +224,9 @@
                       <div class="right-info">
                         <ul>
                           <li><i class="fa fa-star"></i> 4.8</li>
-                          <li><i class="fa fa-download"></i> 2.3M</li>
+                          <li><i class="las la-truck"></i> 2.3M</li>
                           <li><i class="las la-rupee-sign"></i>₹ <%= productcost %></li>
-                          <li><i class="las la-weight-hanging"></i> Action</li>
+                          <li><i class="las la-weight-hanging"></i> <%= weight %>Kg</li>
                         </ul>
                       </div>
                     </div>

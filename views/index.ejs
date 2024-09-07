@@ -78,6 +78,10 @@ https://templatemo.com/tm-579-cyborg-gaming
       text-align: center;
       opacity: 75%;
     }
+    button{
+      background-color: #ec6090;
+      border-radius: 15%;
+    }
 </style>
   </head>
 
@@ -109,17 +113,29 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <!-- ***** Logo End ***** -->
                     <!-- ***** Search End ***** -->
                     <div class="search-input">
-                      <form id="search" action="#">
+                      <form id="search" onsubmit="return handleSearch()">
                         <input type="text" placeholder="Type Something" id='searchText' name="searchKeyword" onkeypress="handle" />
                         <i class="fa fa-search"></i>
                       </form>
                     </div>
+                    <script>
+                      function handleSearch() {
+                        const searchTerm = document.getElementById('searchText').value.trim().toLowerCase();
+                        
+                        // Send the user directly to the product page if search term matches a model
+                        if (searchTerm) {
+                          window.location.href = `/search?searchKeyword=${encodeURIComponent(searchTerm)}`;
+                        }
+                        
+                        return false; // Prevent form submission (handled via JavaScript)
+                      }
+                    </script>
                     <!-- ***** Search End ***** -->
                     <!-- ***** Menu Start ***** -->
                     <ul class="nav">
                         <li><a href="/" class="active">Home</a></li>
-                        <li><a href="browse.html">Products</a></li>
-                        <li><a href="details.html">Details</a></li>
+                        <li><a href="#products">Products</a></li>
+                      
                         <li><a href="/cart"><div class="cart-icon-container">cart 
                           <!-- <i class="las la-shopping-cart"></i> -->
                           <span class="cart-badge" id="cartq">0</span> 
@@ -150,7 +166,7 @@ https://templatemo.com/tm-579-cyborg-gaming
                   <h6>Welcome To Cyborg</h6>
                   <h4><em>Browse</em> Our Popular GPU's Here</h4>
                   <div class="main-button">
-                    <a href="browse.html">Browse Now</a>
+                    <a href="#products">Browse Now</a>
                   </div>
                 </div>
               </div>
@@ -162,7 +178,8 @@ https://templatemo.com/tm-579-cyborg-gaming
   <div class="row">
     <div class="col-lg-12">
       <div class="heading-section">
-        <h4><em>Most Popular</em> Right Now</h4>
+        <div id="products">
+        <h4>Our Products</h4>
       </div>
       <div class="row">
         <div class="col-lg-5 col-lg-5">
@@ -171,12 +188,12 @@ https://templatemo.com/tm-579-cyborg-gaming
             <canvas id="canvas-r3090" class="item-canvas"></canvas></a>
             <h4>Rtx 3090<br><span><a href="/product/rtx3090" >more info...</a></span></h4>
             <ul>
-              <li><i class="fa fa-star"></i> 4.8</li>
-              <li><i class="las la-cart-arrow-down"></i>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('3090', 1)"><i class="las la-plus-square"></i></button>
-                <p style="display: inline;" id="3090-q"></p>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('3090', -1)"><i class="las la-minus-square"></i></button>
-                </li>
+              
+                
+              <li id="product-3090">
+                <button id="buy-now-3090" onclick="buyNow('3090')" >Buy Now <i class="las la-cart-arrow-down"></i></button>
+            </li>
+        
           
             </ul>
           </div>
@@ -188,12 +205,10 @@ https://templatemo.com/tm-579-cyborg-gaming
             <canvas id="canvas-r3080" class="item-canvas"></canvas></a>
             <h4>Rtx 3080<br><span><a href="/product/rtx3080" >more info...</a></span></h4>
             <ul>
-              <li><i class="fa fa-star"></i> 4.8</li>
-              <li>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('3080', 1)"><i class="las la-plus-square"></i></button>
-                <p style="display: inline;" id="3080-q"></p>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('3080', -1)"><i class="las la-minus-square"></i></button>
-                </li>
+              
+              <li id="product-3080">
+                <button id="buy-now-3080" onclick="buyNow('3080')" >Buy Now</button>
+            </li>
            
             </ul>
           </div>
@@ -203,12 +218,10 @@ https://templatemo.com/tm-579-cyborg-gaming
             <canvas id="canvas-r3070" class="item-canvas"></canvas></a>
             <h4>Rtx 3070</a><br><span><a href="/product/rtx3070" >more info...</a></span></h4>
             <ul>
-              <li><i class="fa fa-star"></i> 4.8</li>
-              <li>
-              <button class="icon-button" style="display: inline;" onclick="updateQuantity('3070', 1)"><i class="las la-plus-square"></i></button>
-              <p style="display: inline;" id="3070-q"></p>
-              <button class="icon-button" style="display: inline;" onclick="updateQuantity('3070', -1)"><i class="las la-minus-square"></i></button>
-              </li>
+              <li id="product-3070">
+                
+                <button id="buy-now-3070" onclick="buyNow('3070')" >Buy Now</button>
+            </li>
              
             </ul>
           </div>
@@ -218,12 +231,9 @@ https://templatemo.com/tm-579-cyborg-gaming
             <canvas id="canvas-r3060" class="item-canvas"></canvas></a>
             <h4>Rtx 3060<br><span><a href="/product/rtx3060" >more info...</a></span></h4>
             <ul>
-              <li><i class="fa fa-star"></i> 4.8</li>
-              <li>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('3060', 1)"><i class="las la-plus-square"></i></button>
-                <p style="display: inline;" id="3060-q"></p>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('3060', -1)"><i class="las la-minus-square"></i></button>
-                </li>
+              <li id="product-3060">
+                <button id="buy-now-3060" onclick="buyNow('3060')" >Buy Now</button>
+            </li>
              
             </ul>
           </div>
@@ -235,12 +245,12 @@ https://templatemo.com/tm-579-cyborg-gaming
               <h4>Rtx 2080</a><br><span><a href="/product/rtx2080" >more info...</a></span></h4>
               <ul>
                
-                <li>
-                  <button class="icon-button" style="display: inline;" onclick="updateQuantity('2080', 1)"><i class="las la-plus-square"></i></button>
-                  <p style="display: inline;" id="2080-q"></p>
-                  <button class="icon-button" style="display: inline;" onclick="updateQuantity('2080', -1)"><i class="las la-minus-square"></i></button>
-                  </li>
                 
+                  <li id="product-2080">
+                      <button id="buy-now-2080" onclick="buyNow('2080')" >Buy Now</button>
+                  </li>
+              
+              
               </ul>
             </div>
           </div>
@@ -249,12 +259,9 @@ https://templatemo.com/tm-579-cyborg-gaming
               <canvas id="canvas-r2070" class="item-canvas"></canvas></a>
               <h4>Rtx 2070</a><br><span><a href="/product/rtx2070" >more info...</a></span></h4>
               <ul>
-                <li><i class="fa fa-star"></i> 4.8</li>
-                <li>
-                  <button class="icon-button" style="display: inline;" onclick="updateQuantity('2070', 1)"><i class="las la-plus-square"></i></button>
-                  <p style="display: inline;" id="2070-q"></p>
-                  <button class="icon-button" style="display: inline;" onclick="updateQuantity('2070', -1)"><i class="las la-minus-square"></i></button>
-                  </li>
+                <li id="product-2070">
+                  <button id="buy-now-2070" onclick="buyNow('2070')" >Buy Now</button>
+              </li>
                 
               </ul>
             </div>
@@ -265,15 +272,13 @@ https://templatemo.com/tm-579-cyborg-gaming
             <canvas id="canvas-r2060" class="item-canvas"></canvas></a>
             <h4>Rtx 2060</a><br><span><a href="/product/rtx2060" >more info...</a></span></h4>
             <ul>
-              <li><i class="fa fa-star"></i> 4.8</li>
-              <li>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('2060', 1)"><i class="las la-plus-square"></i></button>
-                <p style="display: inline;" id="2060-q"></p>
-                <button class="icon-button" style="display: inline;" onclick="updateQuantity('2060', -1)"><i class="las la-minus-square"></i></button>
-                </li>
+              <li id="product-2060">
+                <button id="buy-now-2060" onclick="buyNow('2060')" >Buy Now</button>
+            </li>
               
             </ul>
           </div>
+        </div>
         </div>
         <!-- <div class="col-lg-12">
           <div class="main-button">
@@ -286,51 +291,97 @@ https://templatemo.com/tm-579-cyborg-gaming
 </div>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 <script>
-  let products= {
-    "3090":0,
-    "3080":0,
-    "3070":0,
-    "3060":0,
-    "2080":0,
-    "2070":0,
-    "2060":0
-  }
-  let sum=0
-  const cartq = document.getElementById('cartq')
-  window.onload = function() {
+let products = {
+    "3090": 0,
+    "3080": 0,
+    "3070": 0,
+    "3060": 0,
+    "2080": 0,
+    "2070": 0,
+    "2060": 0
+};
+let sum = 0;
+const cartq = document.getElementById('cartq');
+
+window.onload = function () {
     const username = Cookies.get('username');
     if (username) {
-      document.getElementById('logg').textContent = username;
-      document.getElementById('logg').href='/profile';
-    } 
-   
+        document.getElementById('logg').textContent = username;
+        document.getElementById('logg').href = '/profile';
+    }
+
     const savedProducts = Cookies.get('products');
     if (savedProducts) {
-      const parsedProducts = JSON.parse(savedProducts);
-      products = parsedProducts;
-      Object.assign(products, parsedProducts);
-      Object.keys(products).forEach(id => {
-        const tag = document.getElementById(`${id}-q`);
-        if (tag) {
-          tag.textContent = products[id] > 0 ? products[id] : ''; // Display quantity only if greater than 0
-          sum += products[id];
-        }
-      });
-      cartq.innerText = sum;
+        const parsedProducts = JSON.parse(savedProducts);
+        products = { ...products, ...parsedProducts }; // Merge default products with saved ones
+
+        // Update the UI for each product based on the quantity
+        Object.keys(products).forEach(id => {
+            const productContainer = document.getElementById(`product-${id}`);
+            if (products[id] > 0) {
+                productContainer.innerHTML = `
+                    <button class="icon-button" style="display: inline;" onclick="updateQuantity('${id}', 1)">
+                        <i class="las la-plus-square"></i>
+                    </button>
+                    <p style="display: inline;" id="${id}-q">${products[id]}</p>
+                    <button class="icon-button" style="display: inline;" onclick="updateQuantity('${id}', -1)">
+                        <i class="las la-minus-square"></i>
+                    </button>
+                `;
+            } else {
+                // If quantity is 0, display "Add to Cart" button
+                productContainer.innerHTML = `
+                    <button id="buy-now-${id}" class="buy-now" onclick="buyNow('${id}')">Buy Now</button>
+                `;
+            }
+            sum += products[id]; // Calculate the total cart quantity
+        });
+        cartq.innerText = sum;
     }
+};
+
+function buyNow(productId) {
+    const productContainer = document.getElementById(`product-${productId}`);
+    products[productId] = 1; // Set initial quantity to 1
+    saveProducts(); // Save updated products to cookies
+
+    productContainer.innerHTML = `
+        <button class="icon-button" style="display: inline;" onclick="updateQuantity('${productId}', 1)">
+            <i class="las la-plus-square"></i>
+        </button>
+        <p style="display: inline;" id="${productId}-q">1</p>
+        <button class="icon-button" style="display: inline;" onclick="updateQuantity('${productId}', -1)">
+            <i class="las la-minus-square"></i>
+        </button>
+    `;
+    cartq.innerText = sumProducts();
 }
 
-function updateQuantity(id, change) {
-    const tag = document.getElementById(`${id}-q`);
-    products[id] = Math.max(0, products[id] + change);
+function updateQuantity(productId, change) {
+    products[productId] = Math.max(0, products[productId] + change); // Prevent negative quantities
+
+    if (products[productId] === 0) {
+        document.getElementById(`product-${productId}`).innerHTML = `
+            <button id="buy-now-${productId}" class="buy-now" onclick="buyNow('${productId}')">Buy Now</button>
+        `;
+    } else {
+        document.getElementById(`${productId}-q`).textContent = products[productId];
+    }
+
+    saveProducts(); // Save updated products to cookies
+    cartq.innerText = sumProducts();
+}
+
+function saveProducts() {
     try {
         Cookies.set('products', JSON.stringify(products), { expires: 365, path: '/' });
     } catch (e) {
         console.error('Error setting cookie:', e);
     }
-    const sum = Object.values(products).reduce((acc, value) => acc + value, 0);
-    tag.innerText = products[id] > 0 ? products[id] : ''; // Display quantity only if greater than 0
-    cartq.innerText = sum;
+}
+
+function sumProducts() {
+    return Object.values(products).reduce((acc, value) => acc + value, 0);
 }
 
 </script>

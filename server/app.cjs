@@ -77,6 +77,24 @@ app.get('/', (req, res) => {
   res.render('index')
 });
 
+app.get('/search', (req, res) => {
+  const searchKeyword = req.query.searchKeyword.toLowerCase();
+  
+  // Try to find the product model that matches the search term
+  const matchedProduct = gpu.find(product => 
+    product.model.toLowerCase() === searchKeyword
+  );
+  
+  if (matchedProduct) {
+    // If a match is found, redirect to the product's page
+    return res.redirect(`/product/${matchedProduct.model}`);
+  } else {
+    // If no match is found, redirect back or send an error
+    return res.status(404).send('Product not found');
+  }
+});
+
+
 app.get('/test',(req,res)=>{
   res.sendFile((path.join(__dirname, '../public/streams.html')))
 })
@@ -113,6 +131,7 @@ app.get('/cart', async (req, res) => {
     });
 
     res.render('newcart', { cartDetails, total ,user});
+    
   } else {
     res.render('newcart', { cartDetails: [], total: 0 ,user});
   }
@@ -202,13 +221,24 @@ const images = {
     '/assets/images/rt260-3.png'
   ]
 }
+const weights = {
+  "3090": 2.7,
+  "3080": 2.5,
+  "3070": 2.4,
+  "3060": 2.2,
+  "2080": 2.6,
+  "2070": 2.5,
+  "2060": 2.3
+};
+
 app.get('/product/:model',async(req,res)=>{
   const model = req.params.model
   const description = gpu.find(item=>item.model === model)
   const price = await product.findOne({productname:model.slice(3,)})
   const productcost = price ? price.productcost : 'Not available'
   const modelimages = images[model] 
-  res.render('product',{model,description,productcost,images: modelimages})
+  const modelname = model.slice(3,)
+  res.render('product',{model,description,productcost,images: modelimages,weight:weights[modelname]})
 })
 
 app.get('/profile',async(req,res)=>{
