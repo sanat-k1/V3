@@ -11,7 +11,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/WEB')
 const app = express();
 const port = 3001
 app.set("view engine","ejs")
-app.use('/node_modules', express.static(path.join(__dirname, '../node_modules')));
+app.set('views', path.join(__dirname, 'views'));
 app.use(bodyparser.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname, '../src')));
 app.use(cookieParser())
