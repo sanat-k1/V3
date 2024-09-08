@@ -104,42 +104,49 @@ app.get('/search', (req, res) => {
 // })
 
 app.get('/cart', async (req, res) => {
-  const username = req.cookies['username']
-  if(username){
-    const user = await User.findOne({username:username})
-  
-  const cartcookie = req.cookies['products'];
-  if (cartcookie) {
-    const cart = JSON.parse(cartcookie);
-    const productNames = Object.keys(cart).filter(product => cart[product] >= 1);
-    const productsFromDB = await product.find({ productname: { $in: productNames } });
-    let total = 0;
+  const username = req.cookies['username'];
+  if (username) {
+    try {
+      const user = await User.findOne({ username });
+      const cartCookie = req.cookies['products'];
 
-    const cartDetails = productsFromDB.map(prod => {
-      const quantity = cart[prod.productname];
-      const cost = prod.productcost * quantity;
-      total += cost;
-      
-      // Get images for each product
-      const model = `rtx${prod.productname}`;
-      const productImages = images[model] || [];
-      const image = productImages[0]
+      if (cartCookie) {
+        const cart = JSON.parse(cartCookie);
+        const productNames = Object.keys(cart).filter(product => cart[product] >= 1);
 
-      return {
-        productname: prod.productname,
-        productcost: prod.productcost,
-        quantity: quantity,
-        cost: cost,
-        images: image// Include images in cart details
-      };
-    });
+        // Retrieve products from DB
+        const productsFromDB = await product.find({ productname: { $in: productNames } });
+        let total = 0;
 
-    res.render('newcart', { cartDetails, total ,user});
-    
+        const cartDetails = productsFromDB.map(prod => {
+          const quantity = cart[prod.productname];
+          const cost = prod.productcost * quantity;
+          total += cost;
+
+          const model = `rtx${prod.productname}`;
+          const productImages = images[model] || [];
+          const image = productImages[0];
+
+          return {
+            productname: prod.productname,
+            productcost: prod.productcost,
+            quantity: quantity,
+            cost: cost,
+            images: image
+          };
+        });
+
+        res.render('newcart', { cartDetails, total, user });
+      } else {
+        res.render('newcart', { cartDetails: [], total: 0, user });
+      }
+    } catch (error) {
+      console.error('Error fetching cart details:', error);
+      res.status(500).send('Server error');
+    }
   } else {
-    res.render('newcart', { cartDetails: [], total: 0 ,user});
+    res.redirect('/login'); // Redirect to login if no username in cookies
   }
-}
 });
 
 app.post('/process-payment', async (req, res) => {
