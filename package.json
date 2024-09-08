@@ -6,10 +6,10 @@
   "scripts": {
     "build:frontend": "vite build",
     "start:frontend": "vite",
-    "build": "webpack",
+    "web": "webpack",
     "back": "nodemon app.cjs",
-    "start": "concurrently \"vite\" \"nodemon app.cjs\"",
-    "devv": "webpack serve"
+    "start": "nodemon app.cjs",
+    "deploy":"vercel --prod"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
@@ -29,7 +29,8 @@
     "lil-gui": "^0.17.0",
     "mongoose": "^8.5.2",
     "stats.js": "^0.17.0",
-    "three": "^0.148.0"
+    "three": "^0.148.0",
+    "vercel": "^37.4.0"
   },
   "main": "server/app.cjs",
   "license": "ISC"
