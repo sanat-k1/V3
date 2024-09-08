@@ -6,7 +6,11 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/WEB')
+const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/WEB';
+
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 const app = express();
 const port = 3001
