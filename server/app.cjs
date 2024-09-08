@@ -95,9 +95,9 @@ app.get('/search', (req, res) => {
 });
 
 
-app.get('/test',(req,res)=>{
-  res.sendFile((path.join(__dirname, '../public/streams.html')))
-})
+// app.get('/test',(req,res)=>{
+//   res.sendFile((path.join(__dirname, '../public/streams.html')))
+// })
 
 app.get('/cart', async (req, res) => {
   const username = req.cookies['username']
